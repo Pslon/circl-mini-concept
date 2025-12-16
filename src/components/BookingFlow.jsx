@@ -1,10 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { usePlacesWidget } from 'react-google-autocomplete';
+
+const AddressInput = ({ apiKey, value, onChange }) => {
+    const { ref } = usePlacesWidget({
+        apiKey: apiKey,
+        onPlaceSelected: (place) => {
+            onChange({ target: { name: 'installationAddress', value: place.formatted_address || '' } });
+        },
+        options: {
+            types: ['address'],
+            componentRestrictions: { country: 'au' },
+        }
+    });
+
+    return (
+        <input
+            required
+            type="text"
+            name="installationAddress"
+            ref={ref}
+            defaultValue={value}
+            onChange={(e) => onChange(e)}
+            placeholder="Start typing your address..."
+            style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(0,0,0,0.2)', color: 'white' }}
+        />
+    );
+};
 
 const BookingFlow = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const [step, setStep] = useState('form'); // 'form' | 'submitting' | 'estimation' | 'payment_processing' | 'success' | 'failure'
     const API_URL = import.meta.env.VITE_API_URL || '';
+    const GOOGLE_PLACES_KEY = import.meta.env.VITE_GOOGLE_PLACES_API_KEY || '';
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
@@ -223,7 +251,7 @@ const BookingFlow = () => {
                 <button
                     onClick={() => {
                         // If we had the booking ID and state preserved, we could go back to estimation.
-                        // For now, simpler to restart or if we persisted state, recover it.
+                        // For now, simpler to restart or if we had a way to resume... 
                         // Assuming "back to home" or retry logic if feasible.
                         // Let's just go to form for safety or if we had a way to resume... 
                         // Actually, if we just came back from stripe, state is lost unless persisted.
@@ -277,8 +305,23 @@ const BookingFlow = () => {
 
                     <div className="form-group" style={{ marginBottom: '1rem' }}>
                         <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Installation Address</label>
-                        <input required type="text" name="installationAddress" value={formData.installationAddress} onChange={handleChange}
-                            style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(0,0,0,0.2)', color: 'white' }} />
+                        {GOOGLE_PLACES_KEY ? (
+                            <AddressInput
+                                apiKey={GOOGLE_PLACES_KEY}
+                                value={formData.installationAddress}
+                                onChange={handleChange}
+                            />
+                        ) : (
+                            <input
+                                required
+                                type="text"
+                                name="installationAddress"
+                                value={formData.installationAddress}
+                                onChange={handleChange}
+                                placeholder="Enter installation address"
+                                style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(0,0,0,0.2)', color: 'white' }}
+                            />
+                        )}
                     </div>
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
