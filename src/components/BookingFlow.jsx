@@ -46,7 +46,8 @@ const BookingFlow = () => {
         heritageListed: false,
         customerEquipment: [],
         animalsOnSite: false,
-        mobileCoverage: 'good'
+        mobileCoverage: 'good',
+        accessNote: ''
     });
     const [estimation, setEstimation] = useState(null);
     const [bookingId, setBookingId] = useState(null);
@@ -339,8 +340,10 @@ const BookingFlow = () => {
                             <select name="buildingType" value={formData.buildingType} onChange={handleChange}
                                 style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(0,0,0,0.2)', color: 'white' }}>
                                 <option value="house">House</option>
-                                <option value="unit">Unit</option>
-                                <option value="warehouse">Warehouse</option>
+                                <option value="townhouse">Townhouse</option>
+                                <option value="apartment">Apartment</option>
+                                <option value="shed">Shed</option>
+                                <option value="other">Other</option>
                             </select>
                         </div>
                     </div>
@@ -351,7 +354,9 @@ const BookingFlow = () => {
                             <select name="storeys" value={formData.storeys} onChange={handleChange}
                                 style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(0,0,0,0.2)', color: 'white' }}>
                                 <option value="one">One</option>
+                                <option value="one_on_stilts">One (Stilts)</option>
                                 <option value="two">Two</option>
+                                <option value="two_on_stilts">Two (Stilts)</option>
                                 <option value="three_plus">Three+</option>
                             </select>
                         </div>
@@ -361,7 +366,7 @@ const BookingFlow = () => {
                             <select name="roofType" value={formData.roofType} onChange={handleChange}
                                 style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(0,0,0,0.2)', color: 'white' }}>
                                 <option value="tile">Tile</option>
-                                <option value="tin">Tin</option>
+                                <option value="metal">Metal</option>
                                 <option value="shingle">Shingle</option>
                             </select>
                         </div>
@@ -382,7 +387,7 @@ const BookingFlow = () => {
                         <select name="mobileCoverage" value={formData.mobileCoverage} onChange={handleChange}
                             style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(0,0,0,0.2)', color: 'white' }}>
                             <option value="good">Good</option>
-                            <option value="poor">Poor</option>
+                            <option value="limited">Limited</option>
                             <option value="none">None</option>
                         </select>
                     </div>
@@ -405,13 +410,26 @@ const BookingFlow = () => {
 
                     <div className="form-group" style={{ marginBottom: '1.5rem' }}>
                         <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Customer Equipment</label>
-                        <div style={{ display: 'flex', gap: '1rem' }}>
+                        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                             <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', background: 'rgba(0,0,0,0.2)', padding: '0.5rem 1rem', borderRadius: '20px', border: formData.customerEquipment.includes('cable_45m') ? '1px solid var(--primary-color)' : '1px solid transparent' }}>
                                 <input type="checkbox" value="cable_45m" checked={formData.customerEquipment.includes('cable_45m')} onChange={handleEquipmentChange}
                                     style={{ width: '16px', height: '16px' }} />
                                 <span>45m Cable</span>
                             </label>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', background: 'rgba(0,0,0,0.2)', padding: '0.5rem 1rem', borderRadius: '20px', border: formData.customerEquipment.includes('mesh_wifi_router') ? '1px solid var(--primary-color)' : '1px solid transparent' }}>
+                                <input type="checkbox" value="mesh_wifi_router" checked={formData.customerEquipment.includes('mesh_wifi_router')} onChange={handleEquipmentChange}
+                                    style={{ width: '16px', height: '16px' }} />
+                                <span>Mesh Wi-Fi Router</span>
+                            </label>
                         </div>
+                    </div>
+
+                    <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Access Notes</label>
+                        <textarea name="accessNote" value={formData.accessNote} onChange={handleChange}
+                            rows="3"
+                            placeholder="Gate codes, access instructions, etc."
+                            style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid var(--glass-border)', background: 'rgba(0,0,0,0.2)', color: 'white' }}></textarea>
                     </div>
 
                     <button type="submit" className="btn-primary" disabled={step === 'submitting'}>
